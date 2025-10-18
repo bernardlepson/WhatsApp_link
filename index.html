@@ -49,18 +49,16 @@
     #bg-wrap{position:fixed; inset:0; z-index:0;}
     canvas#chart{position:absolute; inset:0; width:100%; height:100%; display:block;}
     .grid{
-       position:absolute;
-       inset:0;
-       /* Use the picture you sent as the background */
-       background-image: url('./assets/stock-wall.jpg'); /* It is recommended to save the image to the project's assets directory and name it stock-wall.jpg */
-       background-size: cover;
-       background-position: center;
-       background-repeat: no-repeat;
-       opacity: 1; /* The certificate is clearly visible */
-     }
+      position:absolute;
+      inset:0;
+      background-image: url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=1920&auto=format&fit=crop'); /* 深色股票投资背景 */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: brightness(0.85) contrast(1.1) saturate(1.1);
+      opacity: 1;
+    }
 
-     /* If you want the background not to drift, just comment out the following line of animation (optional)： */
-     /* .grid{animation:drift 18s linear infinite;} */
 
 
     #toasts{position:fixed; inset:0; pointer-events:none; z-index:2;}
@@ -448,3 +446,4 @@
   </script>
 </body>
 </html>
+
