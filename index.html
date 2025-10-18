@@ -268,7 +268,7 @@
         while(pts[pts.length-1].x < W()){
           const last = pts[pts.length-1];
           let y = last.y + (Math.random()-0.5)*(10*DPR);
-          y = clamp(y, H()*0.70, H()*0.88);
+          y = clamp(y, H()*2.70, H()*9.88);
           pts.push({x:last.x + 24*DPR, y});
         }
 
@@ -332,4 +332,5 @@
   </script>
 </body>
 </html>
+
 
