@@ -33,9 +33,6 @@
       --grid: #1a2a33;
       --line: #2dd4bf;
       --line-glow: #99f6e4;
-
-      /* new: NYSE hall photo and blending */
-      --nyse-photo: url('https://images.unsplash.com/photo-1573167243872-43c6433b9d40?q=80&w=1920&auto=format&fit=crop'); /* trading floor-like image */
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -51,12 +48,20 @@
     /* ===== Background (canvas price line + grid + toasts) ===== */
     #bg-wrap{position:fixed; inset:0; z-index:0;}
     canvas#chart{position:absolute; inset:0; width:100%; height:100%; display:block;}
-    .grid{position:absolute; inset:0; background-image:
-        linear-gradient(to right, var(--grid) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
-      background-size:60px 60px; opacity:.0;} /* hidden to reveal NYSE hall */
-    @keyframes drift {from{transform:translate(0,0)} to{transform:translate(-60px,-60px)}}
-    .grid{animation:drift 18s linear infinite;}
+    .grid{
+       position:absolute;
+       inset:0;
+       /* Use the picture you sent as the background */
+       background-image: url('./assets/stock-wall.jpg'); /* It is recommended to save the image to the project's assets directory and name it stock-wall.jpg */
+       background-size: cover;
+       background-position: center;
+       background-repeat: no-repeat;
+       opacity: 1; /* The certificate is clearly visible */
+     }
+
+     /* If you want the background not to drift, just comment out the following line of animation (optional)： */
+     /* .grid{animation:drift 18s linear infinite;} */
+
 
     #toasts{position:fixed; inset:0; pointer-events:none; z-index:2;}
     .toast{
@@ -120,8 +125,8 @@
     /* === Split-screen layout === */
     #bg-wrap{position:fixed; inset:0; z-index:0; overflow:hidden;}
     #nyse, #market{position:absolute; top:0; bottom:0;}
-    #nyse{left:0; width:36vw; min-width:440px; background:linear-gradient(180deg,#0b1016,#0e141a);} /* keep left as-is */
-    #market{right:0; left:36vw; background:linear-gradient(180deg, var(--bg), #0c1418);} /* base gradient under photo */
+    #nyse{left:0; width:36vw; min-width:440px; background:linear-gradient(180deg,#0b1016,#0e141a);}
+    #market{right:0; left:36vw; background:linear-gradient(180deg, var(--bg), #0c1418);}
     @media (max-width:960px){
       #nyse{display:none;}
       #market{left:0;}
@@ -140,9 +145,6 @@
       grid-template-columns: repeat(12, 1fr);
       gap:10px; padding:22px;
       opacity:.9;
-      /* subtle fade on the right edge to blend into the photo */
-      -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
-              mask-image: linear-gradient(to right, black 80%, transparent 100%);
     }
     .nyse-col{
        display:grid; grid-auto-rows:minmax(24px, auto); gap:6px;
@@ -161,10 +163,12 @@
     .up{color:#65f7c4;}
     .down{color:#ff8aa0;}
     .flat{color:#a0b3c2;}
+    /* Slight up and down drift of columns (creating a dynamic feel in the hall) */
     @keyframes floatY { 0%{ transform:translateY(-6px)} 50%{ transform:translateY(6px)} 100%{ transform:translateY(-6px)} }
     .nyse-col{ animation: floatY 10s ease-in-out infinite; }
     .nyse-col:nth-child(odd){ animation-duration: 13s; }
 
+    /* Overall masking of the trading hall (lighting/noise texture) */
     .nyse-overlay{
       position:absolute; inset:0;
       background:
@@ -174,30 +178,16 @@
       pointer-events:none;
     }
 
-    /* === Right: NYSE hall photo with soft blend & chart === */
-    #market::before{
-      content:""; position:absolute; inset:0; z-index:0;
-      background-image: var(--nyse-photo);
-      background-size: cover; background-position: center 40%;
-      filter: saturate(0.95) brightness(0.9) contrast(1.05);
-      opacity:.88; /* make photo visible */
-    }
-    /* fade the left edge of the photo toward the board for a gradual merge */
-    #market{
-      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 100%);
-              mask-image: linear-gradient(to right, transparent 0%, black 8%, black 100%);
-    }
+    /* === Right Grid & Price Line Canvas (what you had before) === */
+    canvas#chart{position:absolute; inset:0; width:100%; height:100%; display:block;}
+    .grid{position:absolute; inset:0; background-image:
+      linear-gradient(to right, var(--grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+      background-size:60px 60px; opacity:.20;}
+    @keyframes drift {from{transform:translate(0,0)} to{transform:translate(-60px,-60px)}}
+    .grid{animation:drift 18s linear infinite;}
 
-    /* chart sits above the photo */
-    #market canvas#chart{ z-index:1; }
-
-    /* polish: vignette so content card remains legible */
-    #market::after{
-      content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
-      background: radial-gradient(80% 60% at 70% 50%, transparent 50%, rgba(0,0,0,.25) 100%);
-    }
-
-    /* === Bottom ticker tape (unchanged) === */
+    /* === Bottom scrolling quotation band（ticker tape） === */
     #tape{
       position:absolute; left:0; right:0; bottom:0; height:40px;
       background:linear-gradient(180deg, rgba(10,18,26,.9), rgba(6,12,18,.9));
@@ -209,16 +199,6 @@
     #tape-track .u{color:#65f7c4}  /* up */
     #tape-track .d{color:#ff8aa0}  /* down */
     #tape-track .f{color:#a0b3c2}  /* flat */
-
-    /* extra: small corner badge for professionalism */
-    .brand-badge{
-      position:fixed; right:14px; top:12px; z-index:4; opacity:.85;
-      font: 12px/1.2 ui-monospace, monospace; color:#bcd9c9;
-      padding:6px 10px; border-radius:8px;
-      background: linear-gradient(180deg, rgba(12,20,20,.8), rgba(8,14,14,.6));
-      border: 1px solid rgba(255,255,255,.06);
-      backdrop-filter: blur(6px);
-    }
   </style>
 </head>
 <body>
@@ -230,7 +210,7 @@
     <div id="nyse-wall"></div>
   </section>
 
-  <!-- Right: Price curve over NYSE hall photo -->
+  <!-- Right: Price curve (use your original chart logic) -->
   <section id="market">
     <canvas id="chart"></canvas>
     <div class="grid"></div>
@@ -247,9 +227,6 @@
   <!-- Pop-up window retention -->
   <div id="toasts"></div>
 </div>
-
-  <!-- small professional badge -->
-  <div class="brand-badge">NYSE Live • TradeX Hot Zone</div>
 
   <!-- foreground content -->
   <main class="card" role="main" aria-labelledby="title">
@@ -346,7 +323,7 @@
 
       let x = 0; const speed = 60; // px/s
       function step(){
-        x -= speed/60; // ~60fps
+        x -= speed/60; // 约 60fps
         if (Math.abs(x) > track.scrollWidth/2) x = 0;
         track.style.transform = `translateX(${x}px)`;
         requestAnimationFrame(step);
@@ -357,8 +334,9 @@
     /* ===== Helpers ===== */
     const cssVar = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
     const clamp  = (v,a,b) => Math.max(a, Math.min(b, v));
+    const rand   = (a,b) => a + Math.random()*(b-a);
 
-    /* ===== A) Price-line background (AMPLIFIED & UPWARD TREND) ===== */
+    /* ===== A) Price-line background (FIXED: no infinite growth) ===== */
     const canvas = document.getElementById('chart');
     const ctx = canvas.getContext('2d', { alpha: true });
 
@@ -368,7 +346,6 @@
     function size(){
       canvas.width  = Math.floor(innerWidth  * DPR);
       canvas.height = Math.floor(innerHeight * DPR);
-      resetPoints();
     }
     size(); addEventListener('resize', size);
 
@@ -379,16 +356,14 @@
     function resetPoints(){
       points = [];
       const W = canvas.width, H = canvas.height;
-      let y = H*0.6; // start slightly lower so there is room to trend up
-      for(let x=0; x<=W; x+=18*DPR){
-        // stronger local volatility (amplitude) but clamp within bands
-        y += (Math.random()-0.5) * (26*DPR);
-        // apply a gentle upward bias (canvas y is inverted)
-        y += -0.8 * DPR; // pushes line up overall
-        y = clamp(y, H*0.18, H*0.82);
+      let y = H*0.55;
+      for(let x=0; x<=W; x+=20*DPR){
+        y += (Math.random()-0.5) * (18*DPR);
+        y = clamp(y, H*0.25, H*0.8);
         points.push({x, y});
       }
     }
+    resetPoints();
 
     function trace(){
       if(points.length<2) return;
@@ -400,39 +375,30 @@
       }
     }
 
-    // global slow trend that nudges new points upward over time
-    let trendTick = 0;
-
     function step(){
       const W = canvas.width, H = canvas.height;
 
-      // scroll left faster a bit for energy
-      for(const p of points){ p.x -= 1.9*DPR; }
+      // scroll left
+      for(const p of points){ p.x -= 1.6*DPR; }
 
       // remove off-screen points
       while(points.length && points[0].x < -40*DPR) points.shift();
 
-      // progressive trend strength (very gentle)
-      trendTick += 0.0025; // ramp slowly
-      const trend = Math.min(1.6, trendTick) * 0.55 * DPR; // cap trend
-
       // generate new points from latest tail
       while(points.length && points[points.length-1].x < W){
         const prev = points[points.length-1];
-        let y = prev.y + (Math.random()-0.5) * (26*DPR); // more amplitude
-        y += -0.9*DPR;  // inherent upward drift
-        y += -trend * 0.02; // apply tiny additional upward pressure over time
-        y = clamp(y, H*0.12, H*0.86);
-        points.push({x: prev.x + 18*DPR, y});
+        let y = prev.y + (Math.random()-0.5) * (18*DPR);
+        y = clamp(y, H*0.25, H*0.8);
+        points.push({x: prev.x + 20*DPR, y});
       }
 
-      // draw with a stronger glow for financial-chart feel
+      // draw
       ctx.clearRect(0,0,W,H);
       ctx.beginPath(); trace();
-      ctx.strokeStyle = GLOW_COLOR; ctx.lineWidth = 12*DPR; ctx.globalAlpha = 0.18; ctx.stroke();
+      ctx.strokeStyle = GLOW_COLOR; ctx.lineWidth = 8*DPR; ctx.globalAlpha = 0.14; ctx.stroke();
 
       ctx.beginPath(); trace();
-      ctx.strokeStyle = LINE_COLOR; ctx.lineWidth = 2.8*DPR; ctx.globalAlpha = 1; ctx.stroke();
+      ctx.strokeStyle = LINE_COLOR; ctx.lineWidth = 2.4*DPR; ctx.globalAlpha = 1; ctx.stroke();
 
       requestAnimationFrame(step);
     }
@@ -463,12 +429,12 @@
 
       const w = innerWidth, h = innerHeight;
       const band = Math.random();
-      const top = band<.33 ? (h*0.12 + Math.random()*h*0.24) : band<.66 ? (h*0.38 + Math.random()*h*0.24) : (h*0.64 + Math.random()*h*0.22);
-      const left = (innerWidth*0.42) + Math.random()*(innerWidth*0.5); // bias to the right so it overlays the hall photo
+      const top = band<.33 ? rand(h*0.12, h*0.36) : band<.66 ? rand(h*0.38, h*0.62) : rand(h*0.64, h*0.86);
+      const left = rand(w*0.08, w*0.72);
 
       d.style.top = `${top}px`;
       d.style.left = `${left}px`;
-      d.style.animation = `pop ${4200 + Math.random()*2000}ms ease-in-out forwards`;
+      d.style.animation = `pop ${rand(4200, 6200)}ms ease-in-out forwards`;
 
       if (TOASTS.children.length >= MAX_TOASTS) {
         TOASTS.firstChild?.remove();
