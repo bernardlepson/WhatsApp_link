@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- More stable mobile viewport settings -->
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no" />
   <title>Join TradeX Hot Zone WhatsApp group</title>
 
   <!-- Open Graph -->
@@ -14,16 +15,11 @@
   <meta property="og:image:height" content="1100" />
   <meta property="og:url" content="https://chat.whatsapp.com/LOlo8R6lbFR5jeG7lN1V0Y" />
 
-  <!-- Twitter Player Card -->
-  <meta name="twitter:card" content="player" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Join TradeX Hot Zone WhatsApp group" />
-  <meta name="twitter:description" content="Click to join the chat and get daily US stock insights and market strategies." />
+  <meta name="twitter:description" content="Click to join the chat and get daily US stock insights and market trading strategies." />
   <meta name="twitter:image" content="https://bernardlepson.github.io/WhatsApp_link/assets/whatsapp-preview.png" />
-  <meta name="twitter:player" content="https://bernardlepson.github.io/WhatsApp_link/assets/player.html" />
-  <meta name="twitter:player:width" content="1280" />
-  <meta name="twitter:player:height" content="720" />
-
-
 
   <style>
     :root {
@@ -53,25 +49,19 @@
     /* ===== Background (canvas price line + grid + toasts) ===== */
     #bg-wrap{position:fixed; inset:0; z-index:0;}
     canvas#chart{position:absolute; inset:0; width:100%; height:100%; display:block;}
-    .grid{
-      position:absolute;
-      inset:0;
-      background-image: url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=1920&auto=format&fit=crop'); /* 深色股票投资背景 */
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      filter: brightness(0.85) contrast(1.1) saturate(1.1);
-      opacity: 1;
-    }
-
-
+    .grid{position:absolute; inset:0; background-image:
+        linear-gradient(to right, var(--grid) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+      background-size:60px 60px; opacity:.25;}
+    @keyframes drift {from{transform:translate(0,0)} to{transform:translate(-60px,-60px)}}
+    .grid{animation:drift 18s linear infinite;}
 
     #toasts{position:fixed; inset:0; pointer-events:none; z-index:2;}
     .toast{
       position:absolute; min-width:260px; max-width:360px; padding:12px 14px;
       background:linear-gradient(180deg, rgba(15,30,48,.92), rgba(8,16,28,.92));
       border:1px solid rgba(255,255,255,.06); border-radius:14px;
-      box-shadow:0 10px 30px rgba(0,0,0,.35);
+      box-shadow:0 10px 30px rgba(0,0,0,0.35);
       color:#e6f6ff;
       transform-origin:center;
       backdrop-filter: blur(6px);
@@ -166,12 +156,10 @@
     .up{color:#65f7c4;}
     .down{color:#ff8aa0;}
     .flat{color:#a0b3c2;}
-    /* Slight up and down drift of columns (creating a dynamic feel in the hall) */
     @keyframes floatY { 0%{ transform:translateY(-6px)} 50%{ transform:translateY(6px)} 100%{ transform:translateY(-6px)} }
     .nyse-col{ animation: floatY 10s ease-in-out infinite; }
     .nyse-col:nth-child(odd){ animation-duration: 13s; }
 
-    /* Overall masking of the trading hall (lighting/noise texture) */
     .nyse-overlay{
       position:absolute; inset:0;
       background:
@@ -199,41 +187,60 @@
     }
     #tape-track{position:absolute; white-space:nowrap; will-change: transform; font: 13px/40px ui-monospace, monospace;}
     #tape-track span{display:inline-block; padding:0 24px; color:#cfe8ff}
-    #tape-track .u{color:#65f7c4}  /* up */
-    #tape-track .d{color:#ff8aa0}  /* down */
-    #tape-track .f{color:#a0b3c2}  /* flat */
+    #tape-track .u{color:#65f7c4}
+    #tape-track .d{color:#ff8aa0}
+    #tape-track .f{color:#a0b3c2}
+
+    /* ====== Mobile fixes ====== */
+    html, body { overflow-x: hidden; }
+    @media (max-width:768px){
+      .card{
+        width:94vw; padding:28px 20px; border-radius:18px;
+        backdrop-filter:none; background:rgba(16,23,26,.92);
+        box-shadow:0 24px 48px rgba(0,0,0,.45), 0 6px 16px rgba(0,0,0,.25);
+      }
+      .logo{width:72px;height:72px;border-radius:16px}
+      h1{font-size:24px;line-height:1.25;margin:12px 0 6px}
+      p.desc{font-size:14px;margin-bottom:16px}
+      .cta{height:48px;width:100%;border-radius:12px}
+      .fine{font-size:12px}
+      .footer{font-size:11px}
+      .fine .link-raw{word-break:break-all}
+      .toast{max-width:280px;min-width:220px;padding:10px 12px}
+    }
+    @media (max-width:360px){
+      .card{padding:22px 16px}
+      h1{font-size:20px}
+    }
   </style>
 </head>
 <body>
   <!-- animated background -->
   <div id="bg-wrap" aria-hidden="true">
-  <!-- Left: NYSE information wall (column digital board + gradient texture) -->
-  <section id="nyse">
-    <div class="nyse-overlay"></div>
-    <div id="nyse-wall"></div>
-  </section>
+    <!-- Left: NYSE information wall -->
+    <section id="nyse">
+      <div class="nyse-overlay"></div>
+      <div id="nyse-wall"></div>
+    </section>
 
-  <!-- Right: Price curve (use your original chart logic) -->
-  <section id="market">
-    <canvas id="chart"></canvas>
-    <div class="grid"></div>
-  </section>
+    <!-- Right: Price curve -->
+    <section id="market">
+      <canvas id="chart"></canvas>
+      <div class="grid"></div>
+    </section>
 
-  <!-- Soft light band separated in the middle -->
-  <div class="split-glow"></div>
+    <div class="split-glow"></div>
 
-  <!-- Bottom: Rolling quotation band（ticker tape） -->
-  <div id="tape">
-    <div id="tape-track"></div>
+    <!-- Bottom: ticker tape -->
+    <div id="tape"><div id="tape-track"></div></div>
+
+    <!-- Toasts -->
+    <div id="toasts"></div>
   </div>
-
-  <!-- Pop-up window retention -->
-  <div id="toasts"></div>
-</div>
 
   <!-- foreground content -->
   <main class="card" role="main" aria-labelledby="title">
-    <img class="logo" src="https://bernardlepson.github.io/WhatsApp-link/assets/whatsapp-preview.png" alt="Trading Chat Logo" />
+    <img class="logo" src="https://bernardlepson.github.io/WhatsApp_link/assets/whatsapp-preview.png" alt="Trading Chat Logo" />
     <h1 id="title">Join TradeX Hot Zone WhatsApp group</h1>
     <p class="desc">Click to join the chat and get daily US stock insights and market trading strategies.</p>
 
@@ -251,20 +258,43 @@
     <div class="footer">Note: The TradeX Hot Zone community primarily focuses on intraday trading and short-term trading, with long-term trading serving as a supplementary tool. We welcome you to join us to learn from each other and improve your return on investment.</div>
   </main>
 
+  <!-- ===== Mobile sizing & DPR patch ===== -->
+  <script>
+    (function mobileSizingPatch(){
+      // Limit DPR to prevent high-resolution screens from bursting the canvas
+      window.__DPR_CAP__ = Math.min(window.devicePixelRatio || 1, 1.75);
+
+      // Use a more stable height to avoid jitter caused by the iOS address bar appearing and disappearing
+      window.__getStableSize__ = function(){
+        const vw = Math.ceil(window.innerWidth  * window.__DPR_CAP__);
+        const vh = Math.ceil((window.visualViewport?.height || window.innerHeight) * window.__DPR_CAP__);
+        return { vw, vh };
+      };
+
+      // Throttling resize
+      let t = 0;
+      window.__onResizeThrottled__ = function(fn){
+        const run = ()=>{ clearTimeout(t); t = setTimeout(fn, 120); };
+        window.addEventListener('resize', run, { passive:true });
+        if (window.visualViewport){
+          window.visualViewport.addEventListener('resize', run, { passive:true });
+        }
+      };
+    })();
+  </script>
+
   <script>
     /* =====================
-     * NYSE Information Wall (column-style digital board)
+     * NYSE Information Wall
      * ===================== */
     (function initNYSE(){
       const WALL = document.getElementById('nyse-wall');
       if(!WALL) return;
 
-      const COLS = 12;             // Number of columns
-      const ROWS = 10;             // Number of rows per column
+      const COLS = 12, ROWS = 10;
       const SYMBOLS = ["AAPL","MSFT","NVDA","AMZN","META","TSLA","GOOGL","AMD","NFLX","AVGO","JPM","BAC","XOM","CVX","KO","PEP","WMT","DIS","INTC","CRM","ADBE","CSCO","QCOM","TSM"];
       const pick = (arr)=> arr[Math.floor(Math.random()*arr.length)];
 
-      // Build columns
       for(let c=0;c<COLS;c++){
         const col = document.createElement('div');
         col.className = 'nyse-col';
@@ -277,11 +307,7 @@
         WALL.appendChild(col);
       }
 
-      // Initialization & Scheduled Updates
-      function rndPct(){
-        const v = (Math.random()*2.6 - 1.3); // -1.3% ~ +1.3%
-        return Math.round(v*100)/100;
-      }
+      function rndPct(){ const v = (Math.random()*2.6 - 1.3); return Math.round(v*100)/100; }
       function updateTile(tile){
         const sym = tile.querySelector('.sym');
         const pct = tile.querySelector('.pct');
@@ -292,20 +318,16 @@
         pct.className = 'pct ' + (v>0?'up': v<0?'down':'flat');
       }
 
-      // First filling
       WALL.querySelectorAll('.tile').forEach(updateTile);
 
-      // Random refresh (4 blocks every 220ms)
       setInterval(()=>{
         const tiles = WALL.querySelectorAll('.tile');
-        for(let i=0;i<4;i++){
-          updateTile(pick([...tiles]));
-        }
+        for(let i=0;i<4;i++) updateTile(pick([...tiles]));
       }, 220);
     })();
 
     /* =====================
-     * Ticker Tape（Ticker Tape）
+     * Ticker Tape
      * ===================== */
     (function initTape(){
       const track = document.getElementById('tape-track');
@@ -321,12 +343,11 @@
       const pill = ([sym, pct]) =>
         `<span class="${pct>0?'u':pct<0?'d':'f'}">${sym} ${(pct>0?'+':'')+pct.toFixed(2)}%</span>`;
 
-      // Dual content for seamless scrolling
       track.innerHTML = FEED.map(pill).join('') + FEED.map(pill).join('');
 
       let x = 0; const speed = 60; // px/s
       function step(){
-        x -= speed/60; // 约 60fps
+        x -= speed/60;
         if (Math.abs(x) > track.scrollWidth/2) x = 0;
         track.style.transform = `translateX(${x}px)`;
         requestAnimationFrame(step);
@@ -339,18 +360,18 @@
     const clamp  = (v,a,b) => Math.max(a, Math.min(b, v));
     const rand   = (a,b) => a + Math.random()*(b-a);
 
-    /* ===== A) Price-line background (FIXED: no infinite growth) ===== */
+    /* ===== A) Price-line background (stable on mobile) ===== */
     const canvas = document.getElementById('chart');
     const ctx = canvas.getContext('2d', { alpha: true });
 
-    // cap DPR to avoid huge canvases on high-DPI screens
-    const DPR = Math.min(window.devicePixelRatio || 1, 2);
+    const DPR = window.__DPR_CAP__; // Limited Use DPR
 
     function size(){
-      canvas.width  = Math.floor(innerWidth  * DPR);
-      canvas.height = Math.floor(innerHeight * DPR);
+      const { vw, vh } = window.__getStableSize__();
+      canvas.width  = vw;
+      canvas.height = vh;
     }
-    size(); addEventListener('resize', size);
+    size(); window.__onResizeThrottled__(size);
 
     const LINE_COLOR = cssVar('--line');
     const GLOW_COLOR = cssVar('--line-glow');
@@ -381,13 +402,9 @@
     function step(){
       const W = canvas.width, H = canvas.height;
 
-      // scroll left
       for(const p of points){ p.x -= 1.6*DPR; }
-
-      // remove off-screen points
       while(points.length && points[0].x < -40*DPR) points.shift();
 
-      // generate new points from latest tail
       while(points.length && points[points.length-1].x < W){
         const prev = points[points.length-1];
         let y = prev.y + (Math.random()-0.5) * (18*DPR);
@@ -395,7 +412,6 @@
         points.push({x: prev.x + 20*DPR, y});
       }
 
-      // draw
       ctx.clearRect(0,0,W,H);
       ctx.beginPath(); trace();
       ctx.strokeStyle = GLOW_COLOR; ctx.lineWidth = 8*DPR; ctx.globalAlpha = 0.14; ctx.stroke();
@@ -407,10 +423,10 @@
     }
     requestAnimationFrame(step);
 
-    /* ===== B) Floating message toasts (with cap) ===== */
+    /* ===== B) Floating message toasts (mobile-aware) ===== */
     const TOASTS = document.getElementById('toasts');
+    const IS_MOBILE = matchMedia('(max-width: 768px)').matches;
 
-    // Edit your messages here (8+). Keep XXXXX as a placeholder if you want.
     const MESSAGES = [
       { title: 'New breakout alert',  text: ' $NUAI just crossed the resistance. Watch volume and VWAP.' },
       { title: 'Pullback noted',      text: 'Short-term retracement on $ABVE. Eyes on 5-min trendline.' },
@@ -423,7 +439,9 @@
       { title: 'Liquidity note',      text: 'Spread widening on small caps. Reduce size accordingly.' }
     ];
 
-    const MAX_TOASTS = 10; // Display up to 10 at a time to avoid accumulation
+    let MAX_TOASTS = IS_MOBILE ? 3 : 10;
+    const SPAWN_MS = IS_MOBILE ? 2200 : 1000;
+
     function spawnToast(i){
       const m = MESSAGES[i % MESSAGES.length];
       const d = document.createElement('div');
@@ -432,24 +450,22 @@
 
       const w = innerWidth, h = innerHeight;
       const band = Math.random();
-      const top = band<.33 ? rand(h*0.12, h*0.36) : band<.66 ? rand(h*0.38, h*0.62) : rand(h*0.64, h*0.86);
-      const left = rand(w*0.08, w*0.72);
+      const top = band<.33 ? (h*0.12 + Math.random()*h*0.24)
+                 : band<.66 ? (h*0.38 + Math.random()*h*0.24)
+                 : (h*0.64 + Math.random()*h*0.22);
+      const left = Math.random()*(w*0.64) + w*0.08;
 
       d.style.top = `${top}px`;
       d.style.left = `${left}px`;
-      d.style.animation = `pop ${rand(4200, 6200)}ms ease-in-out forwards`;
+      d.style.animation = `pop ${Math.random()*2000 + 4200}ms ease-in-out forwards`;
 
-      if (TOASTS.children.length >= MAX_TOASTS) {
-        TOASTS.firstChild?.remove();
-      }
+      if (TOASTS.children.length >= MAX_TOASTS) TOASTS.firstChild?.remove();
       TOASTS.appendChild(d);
       setTimeout(()=> d.remove(), 6500);
     }
 
     let i = 0;
-    setInterval(()=>{ spawnToast(i++); }, 1000); // One per second
+    setInterval(()=>{ spawnToast(i++); }, SPAWN_MS);
   </script>
 </body>
 </html>
-
-
